@@ -29,12 +29,13 @@ def get_inventory(id):
     contract = w3.eth.contract(address=CHARACTER_ADDRESS, abi=character.abi)
 
     inventory_integer = contract.caller.viewInventory(id)
-
+    retval = ""
     for i in range(3, 78, 5):
         item_id = get_micro(inventory_integer, i, 3)
         item_count = get_micro(inventory_integer, i + 2, 2)
         if item_id:
-            print (f"item id: {item_id} - {item_count}")
+            retval += f"item id: {item_id}\t - count:{item_count}\n"
+    return retval
 
 def get_equipment(id):
     w3 = Web3(Web3.HTTPProvider(KOVAN_ENDPOINT))
@@ -64,8 +65,10 @@ def get_equipment(id):
         ('LRING4', 57, 3),
         ('RRING4', 60, 3)
     ]
+    retval = ""
     for equipment in equipment_sets:
         equipment_id = get_micro(equipment_integer, equipment[1], equipment[2])
         if equipment_id:
-            print(f"{equipment_id} equipped on {equipment[0]}")
+            retval += f"{equipment_id} equipped on {equipment[0]}\n"
+    return retval
     

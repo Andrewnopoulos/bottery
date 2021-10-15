@@ -5,7 +5,6 @@ from data.itemdb import get_itemdb
 
 def create_inventory_image(inventory: Inventory):
     base = Image.open('data/static/inventory.png')
-    # print (base.info['icc_profile'])
     base_copy = base.copy()
 
     db = get_itemdb()
@@ -28,13 +27,7 @@ def create_inventory_image(inventory: Inventory):
     base_copy.save(output_filename, quality=95)
     return output_filename
 
-    # im1 = Image.open('data/src/rocket.jpg')
-    # im2 = Image.open('data/src/lena.jpg')
 
-    # back_im = im1.copy()
-    # back_im.paste(im2, (100, 50))
-    # back_im.save('data/dst/rocket_pillow_paste.jpg', quality=95)
-
-from craft_interface import get_inventory
-
-create_inventory_image(get_inventory(10))
+if __name__ == '__main__':
+    from craft_interface import get_inventory
+    create_inventory_image(get_inventory(10))

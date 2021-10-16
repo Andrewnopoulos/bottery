@@ -1,7 +1,10 @@
+from os import scandir
 from PIL import Image
 from data.inventory import Inventory
 
 from data.itemdb import get_itemdb
+
+SCALE_FACTOR = 2
 
 def create_inventory_image(inventory: Inventory):
     base = Image.open('data/static/inventory.png')
@@ -9,17 +12,27 @@ def create_inventory_image(inventory: Inventory):
 
     db = get_itemdb()
 
-    x = 25
-    y = 35
+    xoffset = 26
+    xiteration = 57
+    yoffset = 35
+    yiteration = 50
+
+    newsize = (base_copy.width * SCALE_FACTOR, base_copy.height * SCALE_FACTOR)
+    base_copy = base_copy.resize(newsize, Image.NEAREST)
+
+    x = xoffset * SCALE_FACTOR
+    y = yoffset * SCALE_FACTOR
     for i in inventory.items:
         if db[i] and db[i].get('png_path'):
             item_img = Image.open(db[i].get('png_path'))
+            newsize = (item_img.width * SCALE_FACTOR, item_img.height * SCALE_FACTOR)
+            item_img = item_img.resize(newsize, Image.NEAREST)
             base_copy.paste(item_img, (x, y), item_img)
-            x += 57
-            if x > 150:
-                x = 25
-                y += 51
-            if y > 90:
+            x += xiteration * SCALE_FACTOR
+            if x > (xoffset * SCALE_FACTOR) + 2 * (xiteration * SCALE_FACTOR):
+                x = xoffset * SCALE_FACTOR
+                y += yiteration * SCALE_FACTOR
+            if y > (yoffset * SCALE_FACTOR) + 3 * (yiteration * SCALE_FACTOR):
                 break
 
     output_filename = 'data/static/inventory_done.png'

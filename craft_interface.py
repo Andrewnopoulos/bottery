@@ -4,6 +4,7 @@ load_dotenv()
 import contract.whirlpool as whirlpool
 import contract.equipment as equipment
 import contract.character as character
+import contract.dungeon as dungeon
 from util import get_micro
 from data.itemdb import get_itemdb, get_translations
 from data.inventory import Inventory
@@ -13,6 +14,7 @@ WHIRLPOOL_ADDRESS = os.getenv('WHIRLPOOL_ADDRESS')
 EQUIPMENT_ADDRESS = os.getenv('EQUIPMENT_ADDRESS')
 CHARACTER_ADDRESS = os.getenv('CHARACTER_ADDRESS')
 MAINNET_ENDPOINT = os.getenv('MAINNET_ENDPOINT')
+DUNGEON_ADDRESS = os.getenv('DUNGEON_ADDRESS')
 
 from web3 import Web3
 
@@ -28,6 +30,11 @@ def equipment_contract():
 
 def initialise_itemdb():
     get_itemdb()
+
+def get_dungeon():
+    w3 = Web3(Web3.HTTPProvider(KOVAN_ENDPOINT))
+
+    return w3.eth.contract(address=DUNGEON_ADDRESS, abi=dungeon.abi)
 
 def get_inventory(id):
     w3 = Web3(Web3.HTTPProvider(KOVAN_ENDPOINT))
@@ -83,3 +90,8 @@ def get_equipment(id):
             retval += f"{equipment_id} equipped on {equipment[0]}\n"
     return retval
     
+
+if __name__ == '__main__':
+    dungeon_contract = get_dungeon()
+
+    print(dungeon_contract)

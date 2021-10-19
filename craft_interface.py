@@ -5,6 +5,7 @@ import contract.whirlpool as whirlpool
 import contract.equipment as equipment
 import contract.character as character
 import contract.dungeon as dungeon
+import contract.combat as combat
 from util import get_micro
 from data.itemdb import get_itemdb, get_translations
 from data.inventory import Inventory
@@ -15,6 +16,7 @@ EQUIPMENT_ADDRESS = os.getenv('EQUIPMENT_ADDRESS')
 CHARACTER_ADDRESS = os.getenv('CHARACTER_ADDRESS')
 MAINNET_ENDPOINT = os.getenv('MAINNET_ENDPOINT')
 DUNGEON_ADDRESS = os.getenv('DUNGEON_ADDRESS')
+COMBAT_ADDRESS = os.getenv('COMBAT_ADDRESS')
 
 from web3 import Web3
 
@@ -31,14 +33,23 @@ def equipment_contract():
 def initialise_itemdb():
     get_itemdb()
 
-def get_dungeon():
+def dungeon_contract():
     w3 = Web3(Web3.HTTPProvider(KOVAN_ENDPOINT))
 
     return w3.eth.contract(address=DUNGEON_ADDRESS, abi=dungeon.abi)
 
-def get_inventory(id):
+def character_contract():
     w3 = Web3(Web3.HTTPProvider(KOVAN_ENDPOINT))
-    contract = w3.eth.contract(address=CHARACTER_ADDRESS, abi=character.abi)
+
+    return w3.eth.contract(address=CHARACTER_ADDRESS, abi=character.abi)
+
+def combat_contract():
+    w3 = Web3(Web3.HTTPProvider(KOVAN_ENDPOINT))
+
+    return w3.eth.contract(address=COMBAT_ADDRESS, abi=combat.abi)
+
+def get_inventory(id):
+    contract = character_contract()
 
     inventory_integer = contract.caller.viewInventory(id)
     inventory = Inventory()
@@ -91,7 +102,63 @@ def get_equipment(id):
     return retval
     
 
-if __name__ == '__main__':
-    dungeon_contract = get_dungeon()
+def display_run_info(run_ids):
+    dungeon_contract_instance = dungeon_contract()
+    combat_contract_instance = combat_contract()
 
-    print(dungeon_contract)
+    dungeon_events = [
+        dungeon_contract_instance.events.FloorEntered,
+        dungeon_contract_instance.events.EnteredRoom,
+        dungeon_contract_instance.events.EffectEncountered,
+        dungeon_contract_instance.events.EnemyEncountered,
+        dungeon_contract_instance.events.TrapEncountered,
+        dungeon_contract_instance.events.LootEncountered,
+        dungeon_contract_instance.events.CreditsEncountered,
+        dungeon_contract_instance.events.ExperienceGained
+    ]
+
+    combat_events = [
+        combat_contract_instance.events.CombatEvent
+    ]
+
+    all_entries = []
+
+    for event in dungeon_events:
+        print(f"event: {event.event_name}")
+        filter = event.createFilter(
+            fromBlock='0x0',
+            argument_filters={"_run": run_ids}
+        )
+        for i in filter.get_all_entries():
+            all_entries.append(i)
+
+    for event in combat_events:
+        print(f"event: {event.event_name}")
+        filter = event.createFilter(
+            fromBlock='0x0',
+            argument_filters={"_runID": run_ids}
+        )
+        for i in filter.get_all_entries():
+            all_entries.append(i)
+
+    print("sorting")
+    all_entries.sort(key=lambda x: x['logIndex'])
+
+    for i in all_entries:
+        print(i.event)
+
+async def view_runs():
+    contract = character_contract()
+
+    for i in range(20):
+        print( f"{i} - {contract.caller.viewRuns(i)}" )
+
+if __name__ == '__main__':
+    contract = character_contract()
+
+    # contract.caller.viewRuns(10)
+    # # print(contract)
+    # import asyncio
+    # asyncio.run(view_runs())
+
+    display_run_info(contract.caller.viewRuns(5))

@@ -12,12 +12,12 @@ bot = commands.Bot(command_prefix='!')
 
 from craft_interface import *
 from data.itemdb import get_itemdb
-from data.inventory_display import create_inventory_image
+from data.inventory_display import create_inventory_image_new
 
 @bot.command(name='inventory', help='retrieves the inventory of an ethercraft character')
 async def get_inventory_entrypoint(ctx, character_id: int):
     inventory = get_inventory(character_id)
-    upload_file = create_inventory_image(inventory)
+    upload_file = create_inventory_image_new(inventory)
     # itemdb = get_itemdb()
     # upload_files = []
 

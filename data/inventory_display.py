@@ -32,7 +32,7 @@ def create_inventory_image_new(inventory: Inventory):
 
         draw = ImageDraw.Draw(base_copy)
         draw.text((ICON_DIMENSIONS + 6, 2), translations.get('name', 'missing_name'), (0, 0, 0), font=FONT)
-        draw.text((IMAGE_WIDTH - 4, 8), f'x{str(inventory.items[i])}', (0, 0, 0), font=FONT, anchor='rt')
+        draw.text((IMAGE_WIDTH - 4, 2), f'x{str(inventory.items[i])}', (0, 0, 0), font=FONT, anchor='ra')
         item_images.append(base_copy)
 
     output_image_dimensions = (IMAGE_WIDTH, len(item_images) * IMAGE_HEIGHT)

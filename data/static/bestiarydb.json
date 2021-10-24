@@ -1,0 +1,44 @@
+[
+    {
+        "name": "Rat",
+        "description": "Small and defenseless. Found in SEWERS",
+        "location": "SEWER",
+        "css": "rat_0",
+        "drops": 190
+    },
+    {
+        "name": "Giant Rat",
+        "description": "A much larger rat, be careful with this one. Found in SEWERS",
+        "location": "SEWER",
+        "css": "rat_1",
+        "drops": 189
+    },
+    {
+        "name": "Skeleton",
+        "description": "Spooky and scary.",
+        "location": "SEWER",
+        "css": "skeleton_0",
+        "drops": 184
+    },
+    {
+        "name": "Skeleton Archer",
+        "description": "Spooky and scary. Found in SEWERS",
+        "location": "SEWER",
+        "css": "skeleton_2",
+        "drops": 186
+    },
+    {
+        "name": "Skeleton Wizard",
+        "description": "Spooky and scary. Found in SEWERS",
+        "location": "SEWER",
+        "css": "skeleton_3",
+        "drops": 188
+    },
+    {
+        "name": "Skeleton Warrior",
+        "description": "Spooky and scary, and armed to the bone. Found in SEWERS",
+        "location": "SEWER",
+        "css": "skeleton_1",
+        "drops": 185
+    }
+]

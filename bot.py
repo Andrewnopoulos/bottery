@@ -11,8 +11,9 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 bot = commands.Bot(command_prefix='!')
 
 from craft_interface import *
-from data.itemdb import get_itemdb
+from data.db import get_itemdb
 from data.inventory_display import create_inventory_image_new
+from data.events.parser import parse_events
 
 @bot.command(name='inventory', help='retrieves the inventory of an ethercraft character')
 async def get_inventory_entrypoint(ctx, character_id: int):
@@ -27,6 +28,19 @@ async def get_inventory_entrypoint(ctx, character_id: int):
     #         upload_files.append(discord.File(png_path))
 
     await ctx.send(file=discord.File(upload_file))
+
+@bot.command(name='run', help='lists the events of an ethercraft dungeon run')
+async def get_run_entrypoint(ctx, run_idx: int):
+    run_data = get_run_info([run_idx])
+
+    for log in parse_events(run_data):
+        await ctx.send(log)
+
+    # print (message_list)
+
+    # message_list = '\n'.join(message_list)
+    # if message_list:
+    #     await ctx.send(message_list)
 
 @bot.command(name='equipment', help='retrieves the equipment of an ethercraft character')
 async def get_equipment_entrypoint(ctx, character_id: int):

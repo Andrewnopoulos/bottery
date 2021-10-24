@@ -1,16 +1,21 @@
-from os import scandir
+import os
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 from data.inventory import Inventory
 
-from data.itemdb import get_itemdb, get_translations
+from data.db import get_itemdb, get_translations
 
 SCALE_FACTOR = 2
 FONT = ImageFont.truetype('data/static/PTM55FT.ttf', 28)
 IMAGE_WIDTH = 700
 IMAGE_HEIGHT = 36
 ICON_DIMENSIONS = 32
+
+OUTPUT_DIRECTORY = 'data/temp'
+
+if not os.path.exists(OUTPUT_DIRECTORY):
+    os.mkdir(OUTPUT_DIRECTORY)
 
 def create_inventory_image_new(inventory: Inventory):
     base = Image.open('data/static/inventory_background.png')
@@ -41,7 +46,7 @@ def create_inventory_image_new(inventory: Inventory):
         paste_position = (0, index * IMAGE_HEIGHT)
         output_image.paste(image, paste_position)
 
-    filename = 'data/static/inventory_done.png'
+    filename = OUTPUT_DIRECTORY + '/inventory_done.png'
     output_image.save(filename, quality=95)
     return filename
 
@@ -74,7 +79,7 @@ def create_inventory_image(inventory: Inventory):
             if y > (yoffset * SCALE_FACTOR) + 3 * (yiteration * SCALE_FACTOR):
                 break
 
-    output_filename = 'data/static/inventory_done.png'
+    output_filename = OUTPUT_DIRECTORY + '/inventory_done.png'
 
     base_copy.save(output_filename, quality=95)
     return output_filename

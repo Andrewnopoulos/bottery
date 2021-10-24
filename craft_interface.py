@@ -7,8 +7,9 @@ import contract.character as character
 import contract.dungeon as dungeon
 import contract.combat as combat
 from util import get_micro
-from data.itemdb import get_itemdb, get_translations
+from data.db import get_itemdb, get_translations
 from data.inventory import Inventory
+from data.events.parser import parse_events
 
 KOVAN_ENDPOINT = os.getenv('KOVAN_ENDPOINT')
 WHIRLPOOL_ADDRESS = os.getenv('WHIRLPOOL_ADDRESS')
@@ -102,7 +103,7 @@ def get_equipment(id):
     return retval
     
 
-def display_run_info(run_ids):
+def get_run_info(run_ids):
     dungeon_contract_instance = dungeon_contract()
     combat_contract_instance = combat_contract()
 
@@ -141,11 +142,9 @@ def display_run_info(run_ids):
         for i in filter.get_all_entries():
             all_entries.append(i)
 
-    print("sorting")
     all_entries.sort(key=lambda x: x['logIndex'])
 
-    for i in all_entries:
-        print(i.event)
+    return all_entries
 
 async def view_runs():
     contract = character_contract()
@@ -161,4 +160,4 @@ if __name__ == '__main__':
     # import asyncio
     # asyncio.run(view_runs())
 
-    display_run_info(contract.caller.viewRuns(5))
+    # get_run_info(contract.caller.viewRuns(5))

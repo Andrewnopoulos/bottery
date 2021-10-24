@@ -1,4 +1,6 @@
 data/img/*
+data/temp
+data/temp/*
 
 
 # Byte-compiled / optimized / DLL files

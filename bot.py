@@ -4,6 +4,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 from toolz.dicttoolz import get_in
+from time import sleep
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -29,12 +30,27 @@ async def get_inventory_entrypoint(ctx, character_id: int):
 
     await ctx.send(file=discord.File(upload_file))
 
+@bot.command(name='runlog', help='lists the events of an ethercraft dungeon run')
+async def get_runlog_entrypoint(ctx, run_idx: int):
+    message = await ctx.send("collecting run data")
+    run_data = get_run_info([run_idx])
+
+    message_content = f"RUN {run_idx}\n"
+
+    for log in parse_events(run_data):
+        message_content += "\t" + log + "\n"
+    
+    await message.edit(content=message_content)
+
 @bot.command(name='run', help='lists the events of an ethercraft dungeon run')
 async def get_run_entrypoint(ctx, run_idx: int):
+    message = await ctx.send("collecting run data")
     run_data = get_run_info([run_idx])
 
     for log in parse_events(run_data):
-        await ctx.send(log)
+        await message.edit(content=log)
+        sleep(3)
+        # await ctx.send(log)
 
     # print (message_list)
 
@@ -58,6 +74,10 @@ async def on_message(message):
 
     if "bot" in message.content:
         response = "<:feelshekman:588164589238091802>"
+        await message.channel.send(response)
+    
+    if "busted" in message.content.lower():
+        response = ":100:"
         await message.channel.send(response)
 
     await bot.process_commands(message)

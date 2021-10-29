@@ -39,7 +39,8 @@ def parse_events(sorted_event_list):
         activeCombatEncounter = None
 
     for encounter in encounters:
-        yield from encounter.get_event_messages()
+        # yield from encounter.get_event_messages()
+        yield from encounter.get_event_emojis() # HACK - properly choose a method
 
     return messageLog
 

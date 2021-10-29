@@ -4,6 +4,7 @@
         "description": "Small and defenseless. Found in SEWERS",
         "location": "SEWER",
         "css": "rat_0",
+        "discord": ":rat:",
         "drops": 190
     },
     {
@@ -11,6 +12,7 @@
         "description": "A much larger rat, be careful with this one. Found in SEWERS",
         "location": "SEWER",
         "css": "rat_1",
+        "discord": ":mouse:",
         "drops": 189
     },
     {
@@ -18,6 +20,7 @@
         "description": "Spooky and scary.",
         "location": "SEWER",
         "css": "skeleton_0",
+        "discord": ":skull:",
         "drops": 184
     },
     {
@@ -25,6 +28,7 @@
         "description": "Spooky and scary. Found in SEWERS",
         "location": "SEWER",
         "css": "skeleton_2",
+        "discord": ":skull::bow_and_arrow:",
         "drops": 186
     },
     {
@@ -32,6 +36,7 @@
         "description": "Spooky and scary. Found in SEWERS",
         "location": "SEWER",
         "css": "skeleton_3",
+        "discord": ":skull::magic_wand:",
         "drops": 188
     },
     {
@@ -39,6 +44,7 @@
         "description": "Spooky and scary, and armed to the bone. Found in SEWERS",
         "location": "SEWER",
         "css": "skeleton_1",
+        "discord": ":skull::dagger:",
         "drops": 185
     }
 ]

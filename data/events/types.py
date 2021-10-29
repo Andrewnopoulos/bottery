@@ -1,3 +1,4 @@
+from toolz.itertoolz import diff
 from util import AttrDict, get_micro
 from data.db import get_beastdb, get_itemdb, get_translations
 
@@ -5,13 +6,54 @@ class EventBase():
     def __init__(self, events):
         self.events = events
 
+    def digit_to_emoji(self, number):
+        if number < 0:
+            return ':heavy_minus_sign:' + self.digit_to_emoji(abs(number))
+        if number == 0:
+            return ':zero:'
+        elif number == 1:
+            return ':one:'
+        elif number == 2:
+            return ':two:'
+        elif number == 3:
+            return ':three:'
+        elif number == 4:
+            return ':four:'
+        elif number == 5:
+            return ':five:'
+        elif number == 6:
+            return ':six:'
+        elif number == 7:
+            return ':seven:'
+        elif number == 8:
+            return ':eight:'
+        elif number == 9:
+            return ':nine:'
+        elif number == 10:
+            return ':keycap_ten:'
+        elif number > 10:
+            retstr = ''
+            for digit in str(number):
+                retstr += self.digit_to_emoji(int(digit))
+            return retstr
+        else:
+            return ''
+
     def parse(self, event):
-        print("missing parse or get_event_messages override")
+        print(f"missing parse or get_event_messages override for {str(self)}")
+        return event
+
+    def emojis(self, event):
+        print(f"missing emoji representation or get_event_emojis override for {str(self)}")
         return event
 
     def get_event_messages(self):
         for event in self.events:
             yield from self.parse(event)
+
+    def get_event_emojis(self):
+        for event in self.events:
+            yield from self.emojis(event)
 
 class EnteredFloorEvent(EventBase):
     def __init__(self, event):
@@ -20,6 +62,9 @@ class EnteredFloorEvent(EventBase):
     def parse(self, event):
         ## TODO: we can display inventory or equipment here
         yield f"Entered the dungeon"
+
+    def emojis(self, event):
+        yield ":arrow_right::homes:"
 
 class EnteredRoomEvent(EventBase):
     def __init__(self, event):
@@ -33,6 +78,16 @@ class EnteredRoomEvent(EventBase):
             roomMessage = "Entered a medium sized room"
         elif event.args._room == 3:
             roomMessage = 'Entered a large room'
+        yield roomMessage
+
+    def emojis(self, event):
+        roomMessage = ""
+        if event.args._room == 1:
+            roomMessage = ":arrow_right::house_abandoned:"
+        elif event.args._room == 2:
+            roomMessage = ":arrow_right::house:"
+        elif event.args._room == 3:
+            roomMessage = ":arrow_right::classical_building:"
         yield roomMessage
 
 class EffectEvent(EventBase):
@@ -53,6 +108,13 @@ class EffectEvent(EventBase):
         elif effect.effectType == 2:
             yield f"A cool breeze replenishes {effect.amount} HP"
 
+    def emojis(self, event):
+        
+        if event.args._type == 1:
+            yield f":wind_blowing_face::heavy_minus_sign:{self.digit_to_emoji(event.args._amount)}"
+        elif event.args._type == 2:
+            yield f":wind_blowing_face::heavy_plus_sign:{self.digit_to_emoji(event.args._amount)}"
+
 class EnemyEncounterEvent(EventBase):
     def __init__(self, event):
         super().__init__([event])
@@ -62,6 +124,12 @@ class EnemyEncounterEvent(EventBase):
         creatureID = event.args._creatureID
         if creatureID < len(beast_db) and creatureID >= 0:
             yield f"Encountered {beast_db[creatureID].get('name', 'a nameless monster')}"
+
+    def emojis(self, event):
+        beast_db = get_beastdb()
+        creatureID = event.args._creatureID
+        if creatureID < len(beast_db) and creatureID >= 0:
+            yield f"{beast_db[creatureID].get('discord', ':imp:')}"
         
 class TrapEvent(EventBase):
     def __init__(self, event):

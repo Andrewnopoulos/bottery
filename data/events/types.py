@@ -153,6 +153,23 @@ class TrapEvent(EventBase):
             if trapDamage:
                 yield f"Took {trapDamage} damage"
 
+    def emojis(self, event):
+        message = ''
+        trapDamage = event.args._damage
+        if event.args._trap == 0:
+            message = ":arrow_heading_down::hole:"
+        elif event.args._trap == 1:
+            message = ":axe:"
+        elif event.args._trap == 2:
+            message = ":mouse_trap:"
+        elif event.args._trap == 3:
+            message = ":fire::fire::fire:"
+        elif event.args._trap == 4:
+            message = ":dart::skull_crossbones:"
+        if trapDamage:
+            message += f":heavy_minus_sign:{self.digit_to_emoji(trapDamage)}"
+        yield message
+
 class LootEvent(EventBase):
     def __init__(self, event):
         super().__init__([event])
@@ -165,6 +182,9 @@ class LootEvent(EventBase):
                 yield f"Enemy dropped {name}"
             else:
                 yield f"Found {name}"
+    
+    def emojis(self, event):
+        yield ":gift:"
 
 class CreditsEvent(EventBase):
     def __init__(self, event):
@@ -173,6 +193,9 @@ class CreditsEvent(EventBase):
     def parse(self, event):
         yield f"Picked up {event.args._amount} gold"
 
+    def emojis(self, event):
+        yield f":coin::heavy_multiplication_x:{self.digit_to_emoji(event.args._amount)}"
+
 class ExperienceEvent(EventBase):
     def __init__(self, event):
         super().__init__([event])
@@ -180,12 +203,18 @@ class ExperienceEvent(EventBase):
     def parse(self, event):
         yield f"Gained {event.args._amount} experience"
 
+    def emojis(self, event):
+        yield f":brain::heavy_multiplication_x:{self.digit_to_emoji(event.args._amount)}"
+
 class NonCombatEvent(EventBase):
     def __init__(self, event):
         super().__init__([event])
     
     def parse(self, event):
         return f"{event.event} - {event.args}"
+
+    def emojis(self, event):
+        yield ":question:"
 
 class CombatEncounter(EventBase):
     def __init__(self, first_event):
@@ -207,61 +236,60 @@ class CombatEncounter(EventBase):
         ### 8 = death
 
         debugstr = f'AFirst: {combat_info.AFirst}\nMoveA: {combat_info.moveA}\nMoveB: {combat_info.moveB}\nhealthA: {combat_info.healthA}\nhealthB: {combat_info.healthB}\n'
-        message_list = []
         
         if combat_info.AFirst:
             if combat_info.moveA == 3:
-                message_list.append("you escaped successfully")
-                return message_list
+                yield "you escaped successfully"
+                return
             
             if combat_info.moveB == 3:
-                message_list.append('Enemy tried to escape')
+                yield 'Enemy tried to escape'
             elif combat_info.moveB == 1:
-                message_list.append('Enemy tried to dodge')
+                yield 'Enemy tried to dodge'
             elif combat_info.moveB == 2:
-                message_list.append('Enemy attacked you (parry)')
+                yield 'Enemy attacked you (parry)'
             elif combat_info.moveB == 0:
-                message_list.append('Enemy attacked you')
+                yield 'Enemy attacked you'
             
             if combat_info.damageA:
-                message_list.append(f'You took {combat_info.damageA} damage')
+                yield f'You took {combat_info.damageA} damage'
 
             if combat_info.moveA == 0:
-                message_list.append(f'You attacked')
+                yield f'You attacked'
             elif combat_info.moveA == 1:
-                message_list.append(f'You dodged')
+                yield f'You dodged'
             elif combat_info.moveA == 2:
-                message_list.append(f'You parried')
+                yield f'You parried'
             
             if combat_info.damageB:
-                message_list.append(f"You did {combat_info.damageB} damage")
+                yield f"You did {combat_info.damageB} damage"
 
         else:
             if combat_info.moveB == 3:
-                message_list.append('Enemy escaped successfully')
-                return message_list
+                yield 'Enemy escaped successfully'
+                return
             
             if combat_info.moveA == 3:
-                message_list.append('You tried to escape')
+                yield 'You tried to escape'
             elif combat_info.moveA == 1:
-                message_list.append('You tried to dodge')
+                yield 'You tried to dodge'
             elif combat_info.moveA == 2:
-                message_list.append('You tried to parry')
+                yield 'You tried to parry'
             elif combat_info.moveA == 0:
-                message_list.append('You tried to attack')
+                yield 'You tried to attack'
 
             if combat_info.damageB:
-                message_list.append(f"You did {combat_info.damageB} damage")
+                yield f"You did {combat_info.damageB} damage"
 
             if combat_info.moveB == 0:
-                message_list.append(f'Enemy attacked')
+                yield f'Enemy attacked'
             elif combat_info.moveB == 1:
-                message_list.append(f'Enemy dodged')
+                yield f'Enemy dodged'
             elif combat_info.moveB == 2:
-                message_list.append(f'Enemy parried')
+                yield f'Enemy parried'
 
             if combat_info.damageA:
-                message_list.append(f'You took {combat_info.damageA} damage')
+                yield f'You took {combat_info.damageA} damage'
 
         if ((combat_info.moveA == 3 and combat_info.moveB == 3) or
             (combat_info.moveA == 1 and combat_info.moveB == 1) or
@@ -271,20 +299,108 @@ class CombatEncounter(EventBase):
             (combat_info.moveA == 4 and combat_info.moveB == 1) or
             (combat_info.moveA == 3 and combat_info.AFirst) or
             (combat_info.moveB == 3 and not combat_info.AFirst)): ## A escapes and B escapes or A dodges and B dodges OR either A or B dodge + escape
-            message_list.append('You and the enemy both escape')
-            return message_list
+            yield 'You and the enemy both escape'
+            return
 
         if combat_info.moveB == 8: ## B dies
-            message_list.append('You killed the enemy')
+            yield 'You killed the enemy'
         elif combat_info.healthA == 0:
-            message_list.append('The enemy killed you')
+            yield 'The enemy killed you'
 
-        return message_list
+    def process_combat_info_emojis(self, combat_info):
+
+        a = ":regional_indicator_a:"
+        b = ":b:"
+
+        if combat_info.AFirst:
+            if combat_info.moveA == 3:
+                yield f"{a}:leftwards_arrow_with_hook:"
+                return
+
+            a_action = f'{a}'
+
+            if combat_info.moveA == 0:
+                a_action += f':dagger:{b}'
+            elif combat_info.moveA == 1:
+                a_action += f':arrows_counterclockwise:'
+            elif combat_info.moveA == 2:
+                a_action += f':crossed_swords:{b}'
+            
+            if combat_info.damageB:
+                a_action += f':heavy_minus_sign:{self.digit_to_emoji(combat_info.damageB)}'
+            yield a_action
+
+            b_action = f'{b}'
+
+            if combat_info.moveB == 3:
+                b_action += f":leftwards_arrow_with_hook::x:"
+            elif combat_info.moveB == 1:
+                b_action += f":arrows_counterclockwise:"
+            elif combat_info.moveB == 2:
+                b_action += f':crossed_swords:{a}'
+            elif combat_info.moveB == 0:
+                b_action += f':dagger:{a}'
+            
+            if combat_info.damageA:
+                b_action += f':heavy_minus_sign:{self.digit_to_emoji(combat_info.damageA)}'
+            yield b_action
+
+        else:
+            if combat_info.moveB == 3:
+                yield f"{b}:leftwards_arrow_with_hook:"
+                return
+            
+            b_action = f'{b}'
+
+            if combat_info.moveB == 1:
+                b_action += f":arrows_counterclockwise:"
+            elif combat_info.moveB == 2:
+                b_action += f':crossed_swords:{a}'
+            elif combat_info.moveB == 0:
+                b_action += f':dagger:{a}'
+            
+            if combat_info.damageA:
+                b_action += f':heavy_minus_sign:{self.digit_to_emoji(combat_info.damageA)}'
+            yield b_action
+
+            a_action = f'{a}'
+
+            if combat_info.moveA == 0:
+                a_action += f':dagger:{b}'
+            elif combat_info.moveA == 1:
+                a_action += f':arrows_counterclockwise:'
+            elif combat_info.moveA == 2:
+                a_action += f':crossed_swords:{b}'
+            elif combat_info.moveA == 3:
+                a_action += f":leftwards_arrow_with_hook::x:"
+            
+            if combat_info.damageB:
+                a_action += f':heavy_minus_sign:{self.digit_to_emoji(combat_info.damageB)}'
+            yield a_action
+
+        if ((combat_info.moveA == 3 and combat_info.moveB == 3) or
+            (combat_info.moveA == 1 and combat_info.moveB == 1) or
+            (combat_info.moveA == 3 and combat_info.moveB == 1) or
+            (combat_info.moveA == 1 and combat_info.moveB == 3) or
+            (combat_info.moveA == 4 and combat_info.moveB == 3) or
+            (combat_info.moveA == 4 and combat_info.moveB == 1) or
+            (combat_info.moveA == 3 and combat_info.AFirst) or
+            (combat_info.moveB == 3 and not combat_info.AFirst)): ## A escapes and B escapes or A dodges and B dodges OR either A or B dodge + escape
+            yield f"{a}:leftwards_arrow_with_hook::arrow_right_hook:{b}"
+            return
+
+        if combat_info.moveB == 8: ## B dies
+            yield f':skull_crossbones:{b}:skull_crossbones:'
+        elif combat_info.healthA == 0:
+            yield f':skull_crossbones:{a}:skull_crossbones:'
 
     def get_event_messages(self):
         for combat_info in self.iterate_combat():
-            messages = self.process_combat_info(combat_info)
-            yield from messages
+            yield from self.process_combat_info(combat_info)
+
+    def get_event_emojis(self):
+        for combat_info in self.iterate_combat():
+            yield from self.process_combat_info_emojis(combat_info)
 
     def iterate_combat(self):
         for index in range(self.totalTurns+1):
@@ -340,7 +456,6 @@ class CombatEncounter(EventBase):
     
     def message_list(self):
         return self.events
-
 
 
 if __name__ == '__main__':

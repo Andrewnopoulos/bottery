@@ -35,12 +35,12 @@ async def get_runlog_entrypoint(ctx, run_idx: int):
     message = await ctx.send("collecting run data")
     run_data = get_run_info([run_idx])
 
-    message_content = f"RUN {run_idx}\n"
+    message_content = ""
 
     for log in parse_events(run_data):
-        message_content += "\t" + log + "\n"
+        message_content += f"{log}\n"
     
-    await message.edit(content=message_content)
+    await ctx.send(message_content)
 
 @bot.command(name='run', help='lists the events of an ethercraft dungeon run')
 async def get_run_entrypoint(ctx, run_idx: int):

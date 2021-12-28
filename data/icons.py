@@ -2,10 +2,9 @@ import os
 import requests
 import re
 from pathlib import Path
-from dotenv import load_dotenv
-load_dotenv()
 
-ICONS_URL = os.getenv('ICONS_URL')
+# ICONS_URL = os.getenv('ICONS_URL')
+ICONS_URL = "https://ethercraft.io/kovan_v46/css/icons.css"
 ETHERCRAFT_KOVAN_URL = os.getenv('ETHERCRAFT_KOVAN_URL')
 
 def parse_raw_icon_response(raw_icon_response):
@@ -37,3 +36,6 @@ def download_all_icons():
     item_icon_list = fetch_icons()
     for item_idx, icon_png in item_icon_list:
         download_icon_png(icon_png)
+
+if __name__ == '__main__':
+    download_all_icons()

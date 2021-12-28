@@ -1,0 +1,11 @@
+{
+    "main": "https://ethercraft.io/",
+    "suffixes": {
+        "image_dir": "img/",
+        "js_dir": "js/"
+    },
+    "versions": {
+        "kovan": "kovan_v46",
+        "mainnet": "fall_new"
+    }
+}

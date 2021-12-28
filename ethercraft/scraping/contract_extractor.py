@@ -1,4 +1,5 @@
 
+from os import pread
 import requests
 import json
 import re
@@ -31,6 +32,15 @@ class Extractor():
         as_json = json.loads(self._strip_js_from_raw(raw_text))
         return as_json
 
+    def _parse_raw_db(self, raw_text):
+        raw_text = self._strip_js_from_raw(raw_text)
+        last_comma_index = raw_text.rfind(',', 1)
+        if last_comma_index > 0:
+            previous_character = raw_text[last_comma_index-1]
+            if previous_character == ']' or previous_character == '}':
+                raw_text = raw_text[:last_comma_index] + raw_text[last_comma_index+1:]
+        return json.loads(raw_text)
+
     def load_abi_from_js(self, abi_file_name):
         file_url = self.js_dir + abi_file_name
         req = requests.get(file_url)
@@ -38,6 +48,15 @@ class Extractor():
             return self._parse_raw_abi(req.text)
         else:
             print(f"ABI not found for {abi_file_name}")
+            return {}
+    
+    def load_db_from_js(self, db_file_name):
+        file_url = self.js_dir + db_file_name
+        req = requests.get(file_url)
+        if req.status_code == 200:
+            return self._parse_raw_db(req.text)
+        else:
+            print(f"ABI not found for {db_file_name}")
             return {}
 
 if __name__ == '__main__':
@@ -51,7 +70,8 @@ if __name__ == '__main__':
 
     w3 = Web3(Web3.HTTPProvider(KOVAN_ENDPOINT))
 
-    extractor = Extractor(ETHERCRAFT_KOVAN_URL)
-    res = extractor.load_abi_from_js('characterABI.js')
-    contr = w3.eth.contract(address=CHARACTER_ADDRESS, abi=res)
+    url = 'https://ethercraft.io/kovan_v46/js/bestiaryDB.js'
+
+    extractor = Extractor('https://ethercraft.io/kovan_v46/')
+    res = extractor.load_db_from_js('bestiaryDB.js')
     print(res)

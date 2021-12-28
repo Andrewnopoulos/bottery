@@ -36,6 +36,7 @@ class Extractor():
         raw_text = self._strip_js_from_raw(raw_text)
         last_comma_index = raw_text.rfind(',', 1)
         if last_comma_index > 0:
+            # strip trailing comma
             previous_character = raw_text[last_comma_index-1]
             if previous_character == ']' or previous_character == '}':
                 raw_text = raw_text[:last_comma_index] + raw_text[last_comma_index+1:]

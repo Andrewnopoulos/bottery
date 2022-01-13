@@ -2,6 +2,8 @@ data/img/*
 data/temp
 data/temp/*
 
+ethercraft/scraping/icons/*.png
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

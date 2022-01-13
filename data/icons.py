@@ -4,8 +4,8 @@ import re
 from pathlib import Path
 
 # ICONS_URL = os.getenv('ICONS_URL')
-ICONS_URL = "https://ethercraft.io/kovan_v46/css/icons.css"
-ETHERCRAFT_KOVAN_URL = os.getenv('ETHERCRAFT_KOVAN_URL')
+ETHERCRAFT_KOVAN_URL = "https://ethercraft.io/kovan_v46/"
+ICONS_URL = ETHERCRAFT_KOVAN_URL + "css/icons.css"
 
 def parse_raw_icon_response(raw_icon_response):
     matches = re.findall(r'.item-(\d+){background-image:url\(../img/([/a-z_A-Z]*.png)\)}', raw_icon_response)

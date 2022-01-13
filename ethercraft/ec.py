@@ -1,7 +1,7 @@
 from logging import addLevelName
 import os, json
 from web3 import Web3
-from scraping.contract_extractor import Extractor
+from ethercraft.scraping import Extractor
 
 from dotenv import load_dotenv
 load_dotenv()

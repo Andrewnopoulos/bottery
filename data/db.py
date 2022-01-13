@@ -40,7 +40,7 @@ def get_itemdb():
             icon_png = os.path.basename(icon_png)
             if idx < len(_itemdb) and _itemdb[idx] is not None:
                 _itemdb[idx]['png'] = icon_png
-                _itemdb[idx]['png_path'] = Path('data/img') / icon_png
+                _itemdb[idx]['png_path'] = Path('ethercraft/scraping/icons') / icon_png
         
     return _itemdb
 

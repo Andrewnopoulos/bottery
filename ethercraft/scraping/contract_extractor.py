@@ -4,7 +4,7 @@ import requests
 import json
 import re
 
-from scraping import IconScraper
+from ethercraft.scraping.icon_scraper import IconScraper
 
 class Extractor():
 
@@ -16,6 +16,7 @@ class Extractor():
         for contract_name in self.addresses:
             self.contracts[contract_name] = self.load_abi_from_js(contract_name + 'ABI.js')
         self.icons = IconScraper(base_url)
+        self.icons.download_all_icons()
 
     def _load_contract_addresses(self):
         file_url = self.js_dir + 'contracts.js'

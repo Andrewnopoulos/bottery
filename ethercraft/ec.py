@@ -1,4 +1,3 @@
-from logging import addLevelName
 import os, json
 from web3 import Web3
 from ethercraft.scraping import Extractor

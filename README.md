@@ -3,6 +3,9 @@
 ## Ethercraft Python
 
 ### To-do
+
+- **Update run processor and display code to use new methods/structure**
+
 - Move code to ethercraft directory
     - Remove load_dotenv and use inbound arguments
     - Make objects, don't be lazy with static methods

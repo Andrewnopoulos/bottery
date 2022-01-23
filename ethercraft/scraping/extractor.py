@@ -4,7 +4,7 @@ import requests
 import json
 import re
 
-from ethercraft.scraping.icon_scraper import IconScraper
+from ethercraft.scraping import IconScraper
 
 class Extractor():
 
@@ -38,12 +38,8 @@ class Extractor():
 
     def _parse_raw_db(self, raw_text):
         raw_text = self._strip_js_from_raw(raw_text)
-        last_comma_index = raw_text.rfind(',', 1)
-        if last_comma_index > 0:
-            # strip trailing comma
-            previous_character = raw_text[last_comma_index-1]
-            if previous_character == ']' or previous_character == '}':
-                raw_text = raw_text[:last_comma_index] + raw_text[last_comma_index+1:]
+        trailing_comma_regex = r'''(?<=[}\]"']),(?!\s*[{["'])'''
+        raw_text = re.sub(trailing_comma_regex, "", raw_text)
         return json.loads(raw_text)
 
     def load_abi_from_js(self, abi_file_name):
@@ -67,4 +63,7 @@ class Extractor():
 if __name__ == '__main__':
     extractor = Extractor('https://ethercraft.io/kovan_v46/')
     res = extractor.load_db_from_js('bestiaryDB.js')
+    print(res)
+
+    res = extractor.load_db_from_js('itemDB.js')
     print(res)

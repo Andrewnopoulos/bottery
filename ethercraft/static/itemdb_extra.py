@@ -1,5 +1,7 @@
 
 def add_extra_items(itemdb):
+    while len(itemdb) < 778:
+        itemdb.append({})
     itemdb[777] = {
         "address": "0x8f04c3f091b94e1997cd06f3c20199f3685c94cc",
         "series": 0,

@@ -1,7 +1,6 @@
 import os
-from util import get_micro
-from data.db import get_itemdb, get_translations
-from data.inventory import Inventory
+from tools.util import get_micro
+from ethercraft.types import Inventory
 from data.events.parser import parse_events
 
 from ethercraft import Ethercraft
@@ -10,7 +9,7 @@ class BotInterface():
     
     def __init__(self):
         self.ec = Ethercraft()
-        self.ec.load_contracts()
+        self.ec.load()
 
     def get_inventory(self, id):
 

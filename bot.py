@@ -11,54 +11,39 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 
 bot = commands.Bot(command_prefix='!')
 
-from craft_interface import BotInterface
-from data.db import get_itemdb
-from data.inventory_display import create_inventory_image_new
+from tools.craft_interface import BotInterface
+from tools.inventory_display import InventoryRenderer
 from data.events.parser import parse_events
 
 iface = BotInterface()
+renderer = InventoryRenderer(iface.ec.items)
 
 @bot.command(name='inventory', help='retrieves the inventory of an ethercraft character')
 async def get_inventory_entrypoint(ctx, character_id: int):
     inventory = iface.get_inventory(character_id)
-    upload_file = create_inventory_image_new(inventory)
-    # itemdb = get_itemdb()
-    # upload_files = []
-
-    # for item in inventory.items:
-    #     png_path = itemdb[item].get('png_path')
-    #     if png_path:
-    #         upload_files.append(discord.File(png_path))
-
+    upload_file = renderer.create_inventory_image(inventory)
     await ctx.send(file=discord.File(upload_file))
 
-@bot.command(name='runlog', help='lists the events of an ethercraft dungeon run')
-async def get_runlog_entrypoint(ctx, run_idx: int):
-    message = await ctx.send("collecting run data")
-    run_data = iface.get_run_info([run_idx])
+# @bot.command(name='runlog', help='lists the events of an ethercraft dungeon run')
+# async def get_runlog_entrypoint(ctx, run_idx: int):
+#     message = await ctx.send("collecting run data")
+#     run_data = iface.get_run_info([run_idx])
 
-    message_content = ""
+#     message_content = ""
 
-    for log in parse_events(run_data):
-        message_content += f"{log}\n"
+#     for log in parse_events(run_data):
+#         message_content += f"{log}\n"
     
-    await ctx.send(message_content)
+#     await ctx.send(message_content)
 
-@bot.command(name='run', help='lists the events of an ethercraft dungeon run')
-async def get_run_entrypoint(ctx, run_idx: int):
-    message = await ctx.send("collecting run data")
-    run_data = iface.get_run_info([run_idx])
+# @bot.command(name='run', help='lists the events of an ethercraft dungeon run')
+# async def get_run_entrypoint(ctx, run_idx: int):
+#     message = await ctx.send("collecting run data")
+#     run_data = iface.get_run_info([run_idx])
 
-    for log in parse_events(run_data):
-        await message.edit(content=log)
-        sleep(3)
-        # await ctx.send(log)
-
-    # print (message_list)
-
-    # message_list = '\n'.join(message_list)
-    # if message_list:
-    #     await ctx.send(message_list)
+#     for log in parse_events(run_data):
+#         await message.edit(content=log)
+#         sleep(3)
 
 @bot.command(name='equipment', help='retrieves the equipment of an ethercraft character')
 async def get_equipment_entrypoint(ctx, character_id: int):
@@ -74,13 +59,13 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if "bot" in message.content:
-        response = "<:feelshekman:588164589238091802>"
-        await message.channel.send(response)
+    # if "bot" in message.content:
+    #     response = "<:feelshekman:588164589238091802>"
+    #     await message.channel.send(response)
     
-    if "busted" in message.content.lower():
-        response = ":100:"
-        await message.channel.send(response)
+    # if "busted" in message.content.lower():
+    #     response = ":100:"
+    #     await message.channel.send(response)
 
     await bot.process_commands(message)
 

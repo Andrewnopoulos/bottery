@@ -1,6 +1,5 @@
-from toolz.itertoolz import diff
-from util import AttrDict, get_micro
-from data.db import get_beastdb, get_itemdb, get_translations
+from tools.util import AttrDict
+# from data.db import get_beastdb, get_itemdb, get_translations
 
 class EventBase():
     def __init__(self, events):
@@ -120,16 +119,16 @@ class EnemyEncounterEvent(EventBase):
         super().__init__([event])
 
     def parse(self, event):
-        beast_db = get_beastdb()
+        # beast_db = get_beastdb()
         creatureID = event.args._creatureID
-        if creatureID < len(beast_db) and creatureID >= 0:
-            yield f"Encountered {beast_db[creatureID].get('name', 'a nameless monster')}"
+        # if creatureID < len(beast_db) and creatureID >= 0:
+        #     yield f"Encountered {beast_db[creatureID].get('name', 'a nameless monster')}"
 
     def emojis(self, event):
-        beast_db = get_beastdb()
+        # beast_db = get_beastdb()
         creatureID = event.args._creatureID
-        if creatureID < len(beast_db) and creatureID >= 0:
-            yield f"{beast_db[creatureID].get('discord', ':imp:')}"
+        # if creatureID < len(beast_db) and creatureID >= 0:
+        #     yield f"{beast_db[creatureID].get('discord', ':imp:')}"
         
 class TrapEvent(EventBase):
     def __init__(self, event):
@@ -174,14 +173,14 @@ class LootEvent(EventBase):
     def __init__(self, event):
         super().__init__([event])
 
-    def parse(self, event):
-        item_db = get_itemdb()
-        if event.args._loot >= 0 and event.args._loot < len(item_db):
-            name = get_translations(item_db[event.args._loot]).get('name', 'unidentifiable item')
-            if event.args._dropped:
-                yield f"Enemy dropped {name}"
-            else:
-                yield f"Found {name}"
+    # def parse(self, event):
+    #     item_db = get_itemdb()
+    #     if event.args._loot >= 0 and event.args._loot < len(item_db):
+    #         name = get_translations(item_db[event.args._loot]).get('name', 'unidentifiable item')
+    #         if event.args._dropped:
+    #             yield f"Enemy dropped {name}"
+    #         else:
+    #             yield f"Found {name}"
     
     def emojis(self, event):
         yield ":gift:"
@@ -458,17 +457,17 @@ class CombatEncounter(EventBase):
         return self.events
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    from craft_interface import character_contract, get_run_info
-    contract = character_contract()
+    # from craft_interface import character_contract, get_run_info
+    # contract = character_contract()
 
     # contract.caller.viewRuns(10)
     # # print(contract)
     # import asyncio
     # asyncio.run(view_runs())
 
-    run_data = get_run_info(contract.caller.viewRuns(5))
+    # run_data = get_run_info(contract.caller.viewRuns(5))
 
     # for data in run_data:
     #     ev = NonCombatEvent(data)

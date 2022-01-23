@@ -1,5 +1,7 @@
 import os, json
 from web3 import Web3
+from ethercraft import Bestiary
+from ethercraft import ItemDatabase
 from ethercraft.scraping import Extractor
 
 from dotenv import load_dotenv
@@ -20,9 +22,13 @@ class Ethercraft():
         endpoint = KOVAN_ENDPOINT if 'kovan' in version else MAINNET_ENDPOINT
         self.web3 = Web3(Web3.HTTPProvider(endpoint))
 
-    def load_contracts(self):
+    def load(self):
         print("Loading contracts")
         self.extractor = Extractor(self.base_url)
+        self.items = ItemDatabase(self.extractor)
+        self.items.load_from_extractor()
+        self.beasts = Bestiary(self.extractor)
+        self.beasts.load_from_extractor()
         print("Contracts loaded")
 
     def get_contract(self, contract_name):
@@ -41,7 +47,7 @@ class Ethercraft():
     
 if __name__ == "__main__":
     e = Ethercraft()
-    e.load_contracts()
+    e.load()
     contract = e.get_contract('character')
     inventory_integer = contract.caller.viewInventory(13)
     print(inventory_integer)

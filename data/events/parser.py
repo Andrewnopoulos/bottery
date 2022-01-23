@@ -1,5 +1,3 @@
-from util import AttrDict
-
 from data.events.types import *
 
 def parse_events(sorted_event_list):
@@ -45,16 +43,16 @@ def parse_events(sorted_event_list):
     return messageLog
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-    from craft_interface import character_contract, get_run_info
-    contract = character_contract()
+#     from craft_interface import character_contract, get_run_info
+#     contract = character_contract()
 
-    # contract.caller.viewRuns(10)
-    # # print(contract)
-    # import asyncio
-    # asyncio.run(view_runs())
+#     # contract.caller.viewRuns(10)
+#     # # print(contract)
+#     # import asyncio
+#     # asyncio.run(view_runs())
 
-    run_data = get_run_info(contract.caller.viewRuns(5))
-    for log in parse_events(run_data):
-        print(log)
+#     run_data = get_run_info(contract.caller.viewRuns(5))
+#     for log in parse_events(run_data):
+#         print(log)
